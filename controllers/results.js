@@ -24,18 +24,15 @@ resultsRouter.get("/", async (req,res) => {
 
 resultsRouter.post("/", async (req,res) => {
     const body = req.body
-
     const token = getToken(req)
     const decodedToken = jwt.verify(token, process.env.SECRET)
     if (!(token && decodedToken.id)) {
         return response.status(401).json({ error: 'token missing or invalid' })
     }
     const user = await User.findById(decodedToken.id)
-    console.log(user)
-    //const user = await User.findById(body.userId)
-
+    
     const result = new Results({
-        totalTime: body.totalTime,
+        totalTime: body.scoreString,
         user: user.id
     })
   

@@ -2,7 +2,7 @@
 const resultsRouter = require("express").Router()
 const Results = require('../models/results')
 const User = require('../models/users')
-const usersRouter = require('./users')
+//const usersRouter = require('./users')
 const jwt = require('jsonwebtoken')
 
 const getToken = req => {
@@ -14,8 +14,6 @@ const getToken = req => {
 }
 
 resultsRouter.get("/", async (req,res) => {
-    // const results = Results.find({}).populate('users')
-    // results.then(results=>res.json(results))
 
     const results = await Results.find({}).populate('user', {username:1})
 
@@ -26,13 +24,19 @@ resultsRouter.post("/", async (req,res) => {
     const body = req.body
     const token = getToken(req)
     const decodedToken = jwt.verify(token, process.env.SECRET)
+
     if (!(token && decodedToken.id)) {
-        return response.status(401).json({ error: 'token missing or invalid' })
+        return res.status(401).json({ error: 'token missing or invalid' })
     }
+
+    if (body.score <= 0) {
+        return res.status(406).json({ error: 'invalid result' })
+    }
+
     const user = await User.findById(decodedToken.id)
     
     const result = new Results({
-        totalTime: body.scoreString,
+        totalTime: JSON.stringify(body.score),
         user: user.id
     })
   

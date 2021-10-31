@@ -35,7 +35,7 @@ resultsRouter.post("/", async (req,res) => {
     const user = await User.findById(decodedToken.id)
     
     const result = new Results({
-        totalTime: JSON.stringify(body.score),
+        totalTime: body.score.toFixed(3),
         user: user.id
     })
   

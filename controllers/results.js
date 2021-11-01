@@ -28,7 +28,8 @@ resultsRouter.post("/", async (req,res) => {
         return res.status(401).json({ error: 'token missing or invalid' })
     }
 
-    if (body.score <= 0) {
+    //Prevent macro input; Tested minimum speed to type 26 keys is ~0.85s. 
+    if (body.score <= 0.85) {
         return res.status(406).json({ error: 'invalid result' })
     }
 
